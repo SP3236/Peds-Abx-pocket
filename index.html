@@ -196,6 +196,7 @@ h1.q{font-family:var(--f-display);font-size:27px;line-height:1.15;font-weight:70
     <p><b>Created by Parth Shirode</b>, pediatric resident, with the help of Claude (Anthropic). © 2026 Parth Shirode. All rights reserved.</p>
     <p><b>Sources.</b> Most regimens are adapted from <i>Nelson’s Pediatric Antimicrobial Therapy</i>, 2026 edition (American Academy of Pediatrics). Where another guideline or review was used, it is credited on that card. All credit for the recommendations belongs to those authors. Pathogen lists are for orientation and are not from these sources.</p>
     <p><b>For education only.</b> Made for residents as a learning tool. Always confirm with your attending and pharmacy before prescribing. This is not an official resource of Akron Children’s Hospital.</p>
+    <p>Anonymous visit counts via GoatCounter; no personal data collected.</p>
   </section>
 </div>
 
@@ -1368,6 +1369,11 @@ document.addEventListener('click',e=>{
   if(t.dataset.dx!==undefined){
     const i=+t.dataset.dx;
     state.open=state.open===i?null:i;
+    /* Anonymous count of which card was opened (GoatCounter event; card name and age group only) */
+    if(state.open===i){try{
+      const d=siteObj().dx.filter(x=>x.a.split(' ').includes(state.age))[i];
+      if(d&&window.goatcounter&&window.goatcounter.count) window.goatcounter.count({path:'card/'+d.n+' | '+ageObj().r,title:d.n,event:true});
+    }catch(err){}}
     const card=t.closest('.dx');
     document.querySelectorAll('.dx').forEach(c=>{
       const isOpen=c===card&&state.open===i;
@@ -1392,5 +1398,6 @@ if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})});
 }
 </script>
+<script data-goatcounter="https://sp3236.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
