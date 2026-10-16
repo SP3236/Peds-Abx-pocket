@@ -728,15 +728,6 @@ const REG={
                 D('Or','Erythromycin',[R('',40,'mg/kg','day',6)],'','For 14 days. Pyloric stenosis risk under 6 weeks.')],
   allergy:'—',dur:['Azithromycin 5 days; erythromycin 14 days'],
   src:[C1+' (Table 1F)',C2],review:[DRAFT]},
-'Pertussis|young':{
-  iv:[],poList:[D('First line (under 6 months)','Azithromycin',[R('',10,'mg/kg','dose',24,'once daily × 5 days')],'','Preferred in young infants (less pyloric stenosis than erythromycin).')],
-  allergy:'—',dur:['5 days'],extra:['Give prophylaxis to household contacts.'],
-  src:[C1+' (Table 1F)',C2],review:[DRAFT]},
-'Pertussis|older':{
-  iv:[],poList:[D('First line','Azithromycin',[R('Under 6 months',10,'mg/kg','dose',24,'once daily × 5 days'),R('6 months+, day 1',10,'mg/kg','dose',24),R('6 months+, days 2–5',5,'mg/kg','dose',24)],'Max 500 mg day 1, then 250 mg/day'),D('Or','Clarithromycin',[R('',15,'mg/kg','day',12)],M18('Max 1 g/day'),'For 7 days.'),TMPSMX('Alternative (14 days)')],
-  allergy:'—',dur:['Azithromycin 5 days; clarithromycin 7 days; TMP/SMX 14 days'],
-  extra:['Give prophylaxis to household contacts.'],
-  src:[C1+' (Table 1F)',C18],review:[DRAFT]},
 'Community-acquired pneumonia|older':{
   iv:[AMPI('Inpatient, fully immunized'),CTX('Unimmunized or high pneumococcal resistance','50–75'),CEFTARO('Add / switch if MRSA suspected',true),
       VANC('Or (MRSA)','40–60')],
@@ -1197,8 +1188,41 @@ const NEO_CEFTARO=D('Or (MRSA)','Ceftaroline',[R('',18,'mg/kg','day',8)],'','≤
  ['Omphalitis|neo',[NEO_VANC,NEO_CEFTARO]]
 ].forEach(([k,list])=>{REG[k].mrsaAdd=list});
 
-/* Pertussis: one concise regimen line */
-REG['Pertussis|older'].poList[0]=D('First line','Azithromycin',[R('','10 mg/kg day 1, then 5','mg/kg','dose',24,'once daily, days 2–5')],'Max 500 mg day 1, then 250 mg/day','Under 6 months: 10 mg/kg once daily × 5 days.');
+/* Pertussis: Red Book text (pasted by Parth 2026-10-16) replaces the Nelson's card */
+(function(){
+  const CITE='AAP Red Book: Pertussis, Recommended Antimicrobial Agents by Age (main source). Nelson\u2019s Pediatric Antimicrobial Therapy, 2026 (TMP/SMX dose and duration, clarithromycin from 6 months, household prophylaxis).';
+  const AZ5=(role)=>D(role,'Azithromycin',[R('',10,'mg/kg','day',24,'once daily × 5 days')]);
+  const AZ6=(role)=>D(role,'Azithromycin',[R('Day 1',10,'mg/kg','dose',24),R('Days 2–5',5,'mg/kg','dose',24)],'Max 500 mg day 1, then 250 mg/day');
+  const QT='Use azithromycin with caution in patients with a prolonged QT interval.';
+  const D3='A 3-day azithromycin course is not validated and not recommended.';
+  const PEN='Penicillins and cephalosporins are not effective against <i>B. pertussis</i>.';
+  const IHPS='Erythromycin and azithromycin in the first 6 weeks of life are associated with a higher risk of infantile hypertrophic pyloric stenosis (IHPS). Azithromycin is still the drug of choice for very young infants.';
+  const PROPH='Give prophylaxis to household contacts.';
+  const TMPALT='TMP/SMX is an alternative only for patients older than 2 months who cannot take a macrolide or have a macrolide-resistant strain.';
+  const review=[{t:'Replaced the Nelson’s version of this card with the Red Book text you pasted (age-specific agents, durations and cautions). Not yet reviewed by you.'},
+    {t:'Kept from the earlier Nelson’s card because your pasted text does not give them: TMP/SMX dose and 14-day duration, clarithromycin from 6 months on (max 1 g/day), and the household-contact prophylaxis line.'}];
+  const base={iv:[],allergy:'—',cite:CITE,src:['AAP Red Book (Pertussis)',"Nelson's 2026"],review};
+  REG['Pertussis|neo']=Object.assign({},base,{
+    poList:[AZ5('First line (preferred)'),D('Alternative','Erythromycin',[R('',40,'mg/kg','day',6)],'','Give for 14 days.')],
+    dur:['Azithromycin 5 days; erythromycin 14 days'],
+    extra:['TMP/SMX is contraindicated under 1 month of age.',IHPS,QT,D3,PEN,PROPH]});
+  REG['Pertussis|yi']=Object.assign({},base,{
+    poList:[AZ5('First line'),D('Or','Clarithromycin',[R('',15,'mg/kg','day',12)],'','Give for 7 days (1–5 months).'),TMPSMX('Alternative (over 2 months only)')],
+    dur:['Azithromycin 5 days; clarithromycin 7 days; TMP/SMX 14 days'],
+    extra:[TMPALT,IHPS,QT,D3,PEN,PROPH]});
+  REG['Pertussis|inf']=Object.assign({},base,{
+    poList:[AZ5('First line, 3–5 months'),AZ6('First line, 6–12 months'),D('Or','Clarithromycin',[R('',15,'mg/kg','day',12)],'Max 1 g/day','Give for 7 days.'),TMPSMX('Alternative (14 days)')],
+    dur:['Azithromycin 5 days; clarithromycin 7 days; TMP/SMX 14 days'],
+    extra:[TMPALT,QT,D3,PEN,PROPH]});
+  REG['Pertussis|older']=Object.assign({},base,{
+    poList:[AZ6('First line'),D('Or','Clarithromycin',[R('',15,'mg/kg','day',12)],'Max 1 g/day','Give for 7 days.'),TMPSMX('Alternative (14 days)')],
+    dur:['Azithromycin 5 days; clarithromycin 7 days; TMP/SMX 14 days'],
+    extra:[TMPALT,QT,D3,PEN,PROPH]});
+  REG['Pertussis|ado']=Object.assign({},base,{
+    poList:[D('First line','Azithromycin',[R('Day 1',500,'mg','fixed',24,'once daily'),R('Days 2–5',250,'mg','fixed',24,'once daily')]),D('Or','Clarithromycin',[R('',15,'mg/kg','day',12)],'Max 1 g/day','Give for 7 days.'),TMPSMX('Alternative (14 days)')],
+    dur:['Azithromycin 5 days; clarithromycin 7 days; TMP/SMX 14 days'],
+    extra:[TMPALT,QT,D3,PEN,PROPH]});
+})();
 
 /* ---------- Normalize every card ---------- */
 (function(){
