@@ -1391,6 +1391,106 @@ window.addEventListener('popstate',e=>{
 });
 try{history.replaceState({s:1,site:null,age:null},'')}catch(e){}
 render();
+  /* ---------- Search bar (added 19 Oct 2026): type a diagnosis, jump straight to its card ---------- */
+(function(){
+  const strip=t=>String(t||'').replace(/<[^>]+>/g,'');
+  /* dx.p is either an array of pathogens or an object keyed by age group (with "_" fallback) */
+  const allPath=d=>{
+    const p=d.p;
+    if(!p) return '';
+    const lists=Array.isArray(p)?[p]:Object.keys(p).map(k=>p[k]);
+    return lists.filter(Array.isArray).reduce((a,l)=>a.concat(l),[]).map(strip).join(' ');
+  };
+  const css=document.createElement('style');
+  css.textContent=`
+.search{margin:14px 0 0}
+.sbox{position:relative}
+.search input{display:block;width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--r);padding:11px 38px 11px 12px;-webkit-appearance:none}
+.search input::-webkit-search-cancel-button,.search input::-webkit-search-decoration{-webkit-appearance:none;display:none}
+.search input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.search .clr{position:absolute;top:50%;right:4px;transform:translateY(-50%);width:32px;height:32px;
+  border:0;background:none;color:var(--muted);font-size:20px;line-height:1;cursor:pointer;border-radius:8px}
+.sres{margin:8px 0 0;padding:0;list-style:none;border:1px solid var(--line);border-radius:var(--r);
+  background:var(--surface);overflow:hidden}
+.sres li+li{border-top:1px solid var(--line)}
+.sres button{display:block;width:100%;text-align:left;background:none;border:0;padding:10px 12px;
+  font:inherit;color:var(--ink);cursor:pointer}
+.sres button:hover,.sres button:focus{background:var(--chip);outline:none}
+.sres .sn{display:block;font-weight:600;font-size:14.5px}
+.sres .sm{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.snone{margin:8px 0 0;font-size:13px;color:var(--muted)}
+[hidden]{display:none!important}`;
+  document.head.appendChild(css);
+
+  const IDX=[];
+  SITES.forEach(s=>s.dx.forEach(d=>{
+    const ages=AGES.filter(a=>d.a.split(' ').includes(a.k)).map(a=>a.k);
+    IDX.push({name:strip(d.n),site:s.k,siteName:s.n,ages:ages,
+      hay:(strip(d.n)+' '+strip(d.d)+' '+s.n+' '+allPath(d)).toLowerCase()});
+  }));
+
+  const wrap=document.createElement('div');
+  wrap.className='search';
+  wrap.innerHTML='<div class="sbox"><input id="sq" type="search" inputmode="search" autocomplete="off" '+
+    'placeholder="Search a diagnosis, e.g. pertussis" aria-label="Search diagnoses">'+
+    '<button class="clr" id="sclr" type="button" aria-label="Clear search" hidden>&times;</button></div>'+
+    '<ul class="sres" id="sres" hidden></ul><p class="snone" id="snone" hidden>No diagnosis matches that.</p>';
+  const hdr=document.querySelector('header.top');
+  hdr.parentNode.insertBefore(wrap,hdr.nextSibling);
+
+  const q=wrap.querySelector('#sq'), res=wrap.querySelector('#sres'),
+        none=wrap.querySelector('#snone'), clr=wrap.querySelector('#sclr');
+  let hits=[];
+
+  /* Only use an age the user has actually chosen. Never guess one: showing a neonatal
+     regimen to someone treating a 5-year-old would be a real error. With no age known,
+     the result takes them to the age picker for that site. */
+  function pickAge(ages){
+    if(state.age&&ages.includes(state.age)) return state.age;
+    if(typeof lastAge==='string'&&lastAge&&ages.includes(lastAge)) return lastAge;
+    return null;
+  }
+  function clear(){q.value='';hits=[];res.hidden=true;none.hidden=true;clr.hidden=true;res.innerHTML=''}
+
+  q.addEventListener('input',()=>{
+    const v=q.value.trim().toLowerCase();
+    clr.hidden=!v;
+    if(v.length<2){hits=[];res.hidden=true;none.hidden=true;res.innerHTML='';return}
+    const terms=v.split(/\s+/);
+    hits=IDX.filter(r=>terms.every(t=>r.hay.includes(t)))
+      .sort((a,b)=>{
+        const r=x=>x.name.toLowerCase().startsWith(terms[0])?0:x.name.toLowerCase().includes(terms[0])?1:2;
+        return r(a)-r(b)||a.name.localeCompare(b.name);
+      }).slice(0,12);
+    if(!hits.length){res.hidden=true;res.innerHTML='';none.hidden=false;return}
+    none.hidden=true;
+    res.innerHTML=hits.map((r,i)=>{
+      const k=pickAge(r.ages), a=AGES.find(x=>x.k===k);
+      return `<li><button type="button" data-hit="${i}"><span class="sn">${r.name}</span>`+
+        `<span class="sm">${r.siteName} · ${a?'opens at '+a.r:'choose the age next'}</span></button></li>`;
+    }).join('');
+    res.hidden=false;
+  });
+
+  clr.addEventListener('click',()=>{clear();q.focus()});
+
+  res.addEventListener('click',e=>{
+    const b=e.target.closest('button[data-hit]');
+    if(!b) return;
+    e.stopPropagation();
+    const r=hits[+b.dataset.hit];
+    if(!r) return;
+    const age=pickAge(r.ages);
+    state.site=r.site;
+    clear(); q.blur();
+    if(!age){state.age=null;state.open=null;go(2,true);return}
+    state.age=age;
+    const list=SITES.find(s=>s.k===r.site).dx.filter(d=>d.a.split(' ').includes(age));
+    state.open=list.findIndex(d=>strip(d.n)===r.name);
+    go(3,true);
+  });
+})();
 </script>
 
 <script>
