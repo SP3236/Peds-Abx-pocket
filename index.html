@@ -392,7 +392,7 @@ function viewDx(){
     return `<article class="dx" data-open="${open}">
       <button class="dx-head" data-dx="${i}" aria-expanded="${open}" aria-controls="p${i}">
         <span>
-          <span class="dx-name" style="display:block">${d.n}${regFor(d,a.k)?'<span class="pill ready">Doses in</span>':''}</span>
+                    <span class="dx-name" style="display:block">${d.n}</span>
           <span class="dx-desc" style="display:block">${d.d}</span>
           <span class="plabel" style="display:block">Likely pathogens</span>
           <span class="chips">${pathogens(d,a.k).map(p=>`<span class="chip">${p}</span>`).join('')}</span>
