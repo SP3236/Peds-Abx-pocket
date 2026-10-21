@@ -1390,7 +1390,48 @@ window.addEventListener('popstate',e=>{
   state.open=null;render();
 });
 try{history.replaceState({s:1,site:null,age:null},'')}catch(e){}
-render();
+/* ---------- Epiglottitis (added 19 Oct 2026). Self-contained: adds the diagnosis and its
+     regimens. Must sit above render() so the card and the search index both pick it up. ---------- */
+(function(){
+  const CITE='Pediatrics in Review: Shlomovich et al., Croup and Epiglottitis (2025); '+
+    'Virbalas & Smith, Upper Airway Obstruction (2015). Contact prophylaxis: Wurzel et al., Paediatric Handbook (2021).';
+  const SRC=['Pediatrics in Review (Croup and Epiglottitis, 2025)','Pediatrics in Review (Upper Airway Obstruction, 2015)'];
+
+  /* Diagnosis entry, placed next to the other deep-throat emergencies */
+  const throat=SITES.find(s=>s.k==='throat');
+  const dx={n:'Epiglottitis',
+    d:'Rapid fever, drooling, muffled voice, tripod posture; airway comes before antibiotics',
+    a:'inf tod sch ado',
+    p:['<i>H. influenzae</i> type b (unimmunized)','<i>S. pyogenes</i> (GAS)','<i>S. pneumoniae</i>','<i>S. aureus</i> incl. MRSA']};
+  const at=throat.dx.findIndex(d=>d.n==='Peritonsillar abscess');
+  throat.dx.splice(at<0?throat.dx.length:at+1,0,dx);
+
+  const CTX_EPI=D('First line','Ceftriaxone',
+    [R('','100 mg/kg day 1, then 50','mg/kg','dose',24,'once daily from 24 h')],
+    M18('Max 2 g for the first dose'),
+    'Cefotaxime is an equivalent alternative where it is available; it is no longer made in the US. For its dose, ask your attending or ID.');
+  const AIRWAY='Airway before antibiotics. Keep the child calm and upright, give blow-by oxygen, '+
+    'and do not examine the pharynx until the airway is secure.';
+  const SITE_='Secure the airway in the OR or ICU (orotracheal or nasotracheal), with tracheostomy as backup.';
+  const EXTUB='Intubation is usually about 48 hours. Extubate once an air leak appears.';
+  const DEX='Dexamethasone 0.15 mg/kg (max 10 mg) IV is optional; the evidence is not enough to recommend it routinely.';
+  const HIB='Confirmed Hib: rifampin 20 mg/kg (max 600 mg) PO once daily for 4 days for close contacts.';
+  const NARROW='Narrow therapy once cultures return.';
+  const base={
+    iv:[CTX_EPI,VANC('Plus, for MRSA cover'),CLI_IV('Or, for MRSA cover')],
+    po:'Ask your attending or ID.',
+    allergy:'Ask your attending or ID.',
+    dur:['7–10 days total, narrowed by culture'],
+    cite:CITE,src:SRC,
+    review:[{t:'Card written from the Pediatrics in Review summary Parth supplied on 19 Oct 2026. Not yet reviewed by you.'},
+      {t:'Missing from the source and still to confirm: cefotaxime dose, penicillin/cephalosporin allergy alternative, vancomycin vs clindamycin preference, and whether neonates and 1–3 month infants should be covered.'}]};
+  const UNDER5='Under 5 years: intubate in the OR whatever the apparent distress. The airway is small and can close quickly.';
+  const OVER5='5 years and older: about 10–25% can be watched without intubation. Intubate for severe obstruction, '+
+    'rapid onset, diabetes or immunocompromise.';
+  REG['Epiglottitis|inf']=Object.assign({},base,{extra:[AIRWAY,UNDER5,SITE_,EXTUB,DEX,HIB,NARROW]});
+  REG['Epiglottitis|tod']=REG['Epiglottitis|inf'];
+  REG['Epiglottitis|older']=Object.assign({},base,{extra:[AIRWAY,OVER5,SITE_,EXTUB,DEX,HIB,NARROW]});
+})();render();
   /* ---------- Search bar (added 19 Oct 2026): type a diagnosis, jump straight to its card ---------- */
 (function(){
   const strip=t=>String(t||'').replace(/<[^>]+>/g,'');
