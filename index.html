@@ -1441,7 +1441,7 @@ try{history.replaceState({s:1,site:null,age:null},'')}catch(e){}
   const RES='Enterococci resist cephalosporins and TMP/SMX, so those options on this card do not cover them.';
   const FAEC='<i>E. faecium</i>, ampicillin-resistant or VRE (linezolid, daptomycin): '+ASK;
   const AMOX=D('Oral step-down (ampicillin-susceptible)','Amoxicillin',[T('','Dose: '+ASK)]);
-  const ENT={
+  const ENTRCO={
     neo:{drugs:REG['Febrile UTI / pyelonephritis|neo'].iv.slice(0,2),
       lines:['Ampicillin + gentamicin above already covers Enterococcus.','Duration: '+ASK,FAEC]},
     febrile:{drugs:[AMPI('First line'),D('Plus','Gentamicin',[R('','5–6','mg/kg','day',24)],'Once daily preferred'),AMOX],
