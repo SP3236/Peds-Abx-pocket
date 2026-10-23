@@ -1431,6 +1431,81 @@ try{history.replaceState({s:1,site:null,age:null},'')}catch(e){}
   REG['Epiglottitis|inf']=Object.assign({},base,{extra:[AIRWAY,UNDER5,SITE_,EXTUB,DEX,HIB,NARROW]});
   REG['Epiglottitis|tod']=REG['Epiglottitis|inf'];
   REG['Epiglottitis|older']=Object.assign({},base,{extra:[AIRWAY,OVER5,SITE_,EXTUB,DEX,HIB,NARROW]});
+})();
+  /* ---------- Enterococcal UTI (added 22 Oct 2026). Self-contained: adds an "If urine grows
+     Enterococcus" section to the Febrile UTI and Cystitis cards, by age. Sits above render(). ---------- */
+(function(){
+  const ASK='Ask your attending or ID.';
+  const CITE='Enterococcal UTI guidance supplied 22 Oct 2026 (source to be confirmed). '+
+    'Doses: Nelson’s Pediatric Antimicrobial Therapy, 2026. Amoxicillin: Vanderbilt Children’s UTI Practice Guideline, 2025.';
+  const RES='Enterococci resist cephalosporins and TMP/SMX, so those options on this card do not cover them.';
+  const FAEC='<i>E. faecium</i>, ampicillin-resistant or VRE (linezolid, daptomycin): '+ASK;
+  const AMOX=D('Oral step-down (ampicillin-susceptible)','Amoxicillin',[T('','Dose: '+ASK)]);
+  const ENT={
+    neo:{drugs:REG['Febrile UTI / pyelonephritis|neo'].iv.slice(0,2),
+      lines:['Ampicillin + gentamicin above already covers Enterococcus.','Duration: '+ASK,FAEC]},
+    febrile:{drugs:[AMPI('First line'),D('Plus','Gentamicin',[R('','5–6','mg/kg','day',24)],'Once daily preferred'),AMOX],
+      lines:[RES,'Duration: 7–10 days hospitalized, 5–10 days outpatient.',FAEC]},
+    cyst:{drugs:[AMOX],
+      lines:[RES,'Duration: 3–5 days (simple cystitis, adolescents).',FAEC]}
+  };
+  function pick(d,age){
+    if(d.n==='Febrile UTI / pyelonephritis') return age==='neo'?ENT.neo:ENT.febrile;
+    if(d.n==='Cystitis') return ENT.cyst;
+    return null;
+  }
+  const css=document.createElement('style');
+  css.textContent='.route-tag.ent{background:var(--per-dose);color:var(--on-badge)}'+
+    '.entl{margin:6px 0 4px;padding-left:18px;font-size:13px}.entl li+li{margin-top:3px}'+
+    '.ents{font-size:12px;color:var(--muted);margin:2px 0 10px}';
+  document.head.appendChild(css);
+
+  const base=panelHTML;
+  panelHTML=function(d,age){
+    const html=base(d,age), e=pick(d,age);
+    if(!e||html.indexOf('<dl class="rows">')<0) return html;
+    const sec='<div class="route"><span class="route-tag ent">ENT</span><span class="route-n">If urine grows Enterococcus</span></div>'+
+      e.drugs.map(x=>drugHTML(x,x.name==='Amoxicillin'?'PO':'IV')).join('')+
+      '<ul class="entl">'+e.lines.map(l=>'<li>'+l+'</li>').join('')+'</ul>'+
+      '<p class="ents">Source for this section: '+CITE+'</p>';
+    return html.replace('<dl class="rows">',sec+'<dl class="rows">');
+  };
+})();
+  /* ---------- Rheumatic carditis (added 22 Oct 2026). Self-contained: adds the diagnosis and its
+     regimen to the heart section. Sits above render(). ---------- */
+(function(){
+  const ASK='Ask your attending or ID.';
+  const CITE='Rheumatic fever guidance supplied 22 Oct 2026 (source to be confirmed); prophylaxis duration: American Heart Association. '+
+    'Eradication doses: Nelson’s Pediatric Antimicrobial Therapy, 2026 (GAS pharyngitis).';
+
+  const heart=SITES.find(s=>s.k==='heart');
+  const at=heart.dx.findIndex(d=>d.n==='Infective endocarditis');
+  heart.dx.splice(at<0?heart.dx.length:at+1,0,{n:'Rheumatic carditis (acute rheumatic fever)',
+    d:'Carditis after GAS pharyngitis; eradicate GAS, then long-term secondary prophylaxis',a:'tod sch ado',
+    p:['<i>S. pyogenes</i> (GAS), preceding pharyngitis']});
+
+  const gas=REG['Group A strep pharyngitis|any'].poList;
+  REG['Rheumatic carditis (acute rheumatic fever)|any']={
+    iv:[],
+    poList:[
+      Object.assign({},gas[1],{role:'Step 1. Eradicate GAS (10 days)'}),
+      Object.assign({},gas[0],{role:'Or'}),
+      D('Step 2. Secondary prophylaxis (most reliable)','Penicillin G benzathine',[T('','1.2 million U IM','every 4 weeks')],'','Start as soon as the eradication course ends.'),
+      D('Or','Penicillin V',[T('','250 mg PO','twice daily')]),
+      D('Or','Sulfadiazine or sulfisoxazole',[T('','0.5–1 g PO','once daily, by weight')]),
+      D('Allergic to penicillin and sulfonamides','Macrolide (erythromycin, azithromycin or clarithromycin)',[T('','Dose: '+ASK)])],
+    allergy:'Eradication: '+ASK+' Prophylaxis: macrolide if allergic to both penicillin and sulfonamides.',
+    dur:['Eradication: 10 days',
+      'Prophylaxis, carditis without residual heart disease: 10 years after the last episode or until age 21, whichever is longer',
+      'Prophylaxis, residual valve disease: 10 years after the last episode or until age 40, whichever is longer; consider lifelong if severe'],
+    extra:['Anti-inflammatory and heart failure treatment for carditis: ask your attending or cardiology.',
+      'Continue prophylaxis even after prosthetic valve replacement.',
+      'Severe allergy to IM benzathine is rare, but more likely over 12 years with severe RHD.',
+      'A serum sickness-like reaction (fever, joint pain) can mimic ARF recurrence.',
+      'Educate the patient and parents.'],
+    cite:CITE,
+    src:['Supplied text 22 Oct 2026','AHA',"Nelson's 2026"],
+    review:[{t:'Card written from the text Parth supplied on 22 Oct 2026; eradication doses reused from the Nelson’s GAS pharyngitis card. Not yet reviewed by you.'}]};
 })();render();
   /* ---------- Search bar (added 19 Oct 2026): type a diagnosis, jump straight to its card ---------- */
 (function(){
