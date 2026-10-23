@@ -193,7 +193,7 @@ h1.q{font-family:var(--f-display);font-size:27px;line-height:1.15;font-weight:70
 
   <section class="foot" id="credit">
     <p class="fb" id="fb" hidden>This tool is still in development, and your feedback would help. <a id="fbLink" href="#" target="_blank" rel="noopener">Give feedback →</a></p>
-    <p><b>Created by Parth Shirode</b>, MD, Pediatric Resident, with the help of Claude (Anthropic). © 2026 Parth Shirode. All rights reserved.</p>
+    <p><b>Created by Parth Shirode</b>, pediatric resident, with the help of Claude (Anthropic). © 2026 Parth Shirode. All rights reserved.</p>
     <p><b>Sources.</b> Most regimens are adapted from <i>Nelson’s Pediatric Antimicrobial Therapy</i>, 2026 edition (American Academy of Pediatrics). Where another guideline or review was used, it is credited on that card. All credit for the recommendations belongs to those authors. Pathogen lists are for orientation and are not from these sources.</p>
     <p><b>For education only.</b> Made for residents as a learning tool. Always confirm with your attending and pharmacy before prescribing. This is not an official resource of Akron Children’s Hospital.</p>
     <p>Anonymous visit counts via GoatCounter; no personal data collected.</p>
@@ -392,7 +392,7 @@ function viewDx(){
     return `<article class="dx" data-open="${open}">
       <button class="dx-head" data-dx="${i}" aria-expanded="${open}" aria-controls="p${i}">
         <span>
-                    <span class="dx-name" style="display:block">${d.n}</span>
+          <span class="dx-name" style="display:block">${d.n}</span>
           <span class="dx-desc" style="display:block">${d.d}</span>
           <span class="plabel" style="display:block">Likely pathogens</span>
           <span class="chips">${pathogens(d,a.k).map(p=>`<span class="chip">${p}</span>`).join('')}</span>
@@ -1432,7 +1432,8 @@ try{history.replaceState({s:1,site:null,age:null},'')}catch(e){}
   REG['Epiglottitis|tod']=REG['Epiglottitis|inf'];
   REG['Epiglottitis|older']=Object.assign({},base,{extra:[AIRWAY,OVER5,SITE_,EXTUB,DEX,HIB,NARROW]});
 })();
-  /* ---------- Enterococcal UTI (added 22 Oct 2026). Self-contained: adds an "If urine grows
+
+/* ---------- Enterococcal UTI (added 22 Oct 2026). Self-contained: adds an "If urine grows
      Enterococcus" section to the Febrile UTI and Cystitis cards, by age. Sits above render(). ---------- */
 (function(){
   const ASK='Ask your attending or ID.';
@@ -1441,7 +1442,7 @@ try{history.replaceState({s:1,site:null,age:null},'')}catch(e){}
   const RES='Enterococci resist cephalosporins and TMP/SMX, so those options on this card do not cover them.';
   const FAEC='<i>E. faecium</i>, ampicillin-resistant or VRE (linezolid, daptomycin): '+ASK;
   const AMOX=D('Oral step-down (ampicillin-susceptible)','Amoxicillin',[T('','Dose: '+ASK)]);
-  const ENTRCO={
+  const ENT={
     neo:{drugs:REG['Febrile UTI / pyelonephritis|neo'].iv.slice(0,2),
       lines:['Ampicillin + gentamicin above already covers Enterococcus.','Duration: '+ASK,FAEC]},
     febrile:{drugs:[AMPI('First line'),D('Plus','Gentamicin',[R('','5–6','mg/kg','day',24)],'Once daily preferred'),AMOX],
@@ -1471,7 +1472,8 @@ try{history.replaceState({s:1,site:null,age:null},'')}catch(e){}
     return html.replace('<dl class="rows">',sec+'<dl class="rows">');
   };
 })();
-  /* ---------- Rheumatic carditis (added 22 Oct 2026). Self-contained: adds the diagnosis and its
+
+/* ---------- Rheumatic carditis (added 22 Oct 2026). Self-contained: adds the diagnosis and its
      regimen to the heart section. Sits above render(). ---------- */
 (function(){
   const ASK='Ask your attending or ID.';
@@ -1506,8 +1508,11 @@ try{history.replaceState({s:1,site:null,age:null},'')}catch(e){}
     cite:CITE,
     src:['Supplied text 22 Oct 2026','AHA',"Nelson's 2026"],
     review:[{t:'Card written from the text Parth supplied on 22 Oct 2026; eradication doses reused from the Nelson’s GAS pharyngitis card. Not yet reviewed by you.'}]};
-})();render();
-  /* ---------- Search bar (added 19 Oct 2026): type a diagnosis, jump straight to its card ---------- */
+})();
+
+render();
+
+/* ---------- Search bar (added 19 Oct 2026): type a diagnosis, jump straight to its card ---------- */
 (function(){
   const strip=t=>String(t||'').replace(/<[^>]+>/g,'');
   /* dx.p is either an array of pathogens or an object keyed by age group (with "_" fallback) */
