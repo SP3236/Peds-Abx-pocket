@@ -1465,7 +1465,7 @@ try{history.replaceState({s:1,site:null,age:null},'')}catch(e){}
   panelHTML=function(d,age){
     const html=base(d,age), e=pick(d,age);
     if(!e||html.indexOf('<dl class="rows">')<0) return html;
-    const sec='<div class="route"><span class="route-tag ent">ENT</span><span class="route-n">If urine grows Enterococcus</span></div>'+
+    const sec='<div class="route"><span class="route-tag ent">ENTRCCS</span><span class="route-n">If urine grows Enterococcus</span></div>'+
       e.drugs.map(x=>drugHTML(x,x.name==='Amoxicillin'?'PO':'IV')).join('')+
       '<ul class="entl">'+e.lines.map(l=>'<li>'+l+'</li>').join('')+'</ul>'+
       '<p class="ents">Source for this section: '+CITE+'</p>';
