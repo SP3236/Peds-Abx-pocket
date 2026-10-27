@@ -1494,7 +1494,36 @@ try{history.replaceState({s:1,site:null,age:null},'')}catch(e){}
   };
 })();
 
-/* ---------- Rheumatic carditis (added 22 Oct 2026). Self-contained: adds the diagnosis and its
+/* ---------- Meningitis durations update (27 Oct 2026). Self-contained: replaces the Duration and
+     source lines on the three bacterial meningitis cards. Sits above the Rheumatic carditis block. ---------- */
+(function(){
+  const NEO=REG['Bacterial meningitis|neo'];
+  const YI=REG['Bacterial meningitis|yi'];
+  const OLD=REG['Bacterial meningitis|older'];
+
+  NEO.dur=[
+    'GBS and other gram-positive: 14–21 days',
+    'S. pneumoniae: at least 14 days',
+    'Listeria: 21 days',
+    'Gram-negative: at least 21 days (or 14 days after CSF is sterile)'];
+  NEO.cite='Nelson’s Pediatric Antimicrobial Therapy, 2026. Added durations: Duration of Antibiotic Therapy for Bacterial Meningitis in Young Infants, Pediatrics 2022 (S. pneumoniae); Community-acquired bacterial meningitis, Nat Rev Dis Primers 2016 (Listeria).';
+
+  YI.dur=[
+    'GBS / gram-positive: 14–21 days',
+    'Gram-negative: at least 21 days',
+    'Pneumococcus: 10–14 days'];
+  YI.cite='Nelson’s Pediatric Antimicrobial Therapy, 2026 (pneumococcus 10 days) and Duration of Antibiotic Therapy for Bacterial Meningitis in Young Infants, Pediatrics 2022 (pneumococcus at least 14 days), shown here as 10–14 days.';
+
+  OLD.dur=[
+    'N. meningitidis: 7 days',
+    'H. influenzae: 7 days',
+    'S. pneumoniae: 10–14 days',
+    'Listeria: 21 days',
+    'Gram-negative bacilli, Pseudomonas: 21–28 days',
+    'Unspecified bacterial meningitis: 10–14 days'];
+  OLD.cite='IDSA Practice Guidelines for Bacterial Meningitis (Tunkel et al., 2004). Added durations (Listeria, gram-negative bacilli, unspecified): EFNS guideline on community-acquired bacterial meningitis, Eur J Neurol 2008 (older children and adults).';
+})();
+  /* ---------- Rheumatic carditis (added 22 Oct 2026). Self-contained: adds the diagnosis and its
      regimen to the heart section. Sits above render(). ---------- */
 (function(){
   const ASK='Ask your attending or ID.';
