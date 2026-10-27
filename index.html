@@ -77,6 +77,14 @@ i{font-style:italic}
 .eyebrow{margin-top:22px;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
 h1.q{font-family:var(--f-display);font-size:27px;line-height:1.15;font-weight:700;margin:4px 0 4px;text-wrap:balance;letter-spacing:-.015em;outline:none}
 .lead{color:var(--muted);margin:0;max-width:60ch}
+  .toprow{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;position:relative}
+.sjs{flex:none;position:relative}
+.sjs>summary{list-style:none;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:5px;background:var(--accent);color:var(--on-badge);-webkit-tap-highlight-color:transparent}
+.sjs>summary::-webkit-details-marker{display:none}
+.sjsp{position:absolute;right:0;top:calc(100% + 6px);z-index:5;width:min(320px,calc(100vw - 32px));max-height:62vh;overflow:auto;background:var(--surface);border:1px solid var(--accent);border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.45;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.sjsp h4{margin:0 0 6px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.sjsp p{margin:0 0 7px}
+.sjsp small{display:block;color:var(--muted);font-size:11.5px;margin-top:4px}
 
 /* Site grid */
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px}
@@ -360,7 +368,20 @@ function renderTrail(){
 function viewSites(){
   return `<div class="eyebrow">Step 1 of 3</div>
   <h1 class="q" tabindex="-1">Where is the infection?</h1>
-  <p class="lead">Head to toe. Tap the site.</p>
+   <div class="toprow"><p class="lead">Head to toe. Tap the site.</p>
+  <details class="sjs"><summary>SJS risk</summary><div class="sjsp">
+    <h4>Higher risk</h4>
+    <p><b>Sulfonamides:</b> TMP/SMX, sulfadiazine, sulfisoxazole</p>
+    <h4>Also reported</h4>
+    <p><b>Penicillins:</b> amoxicillin, amoxicillin-clavulanate, ampicillin, ampicillin-sulbactam, penicillin G/V, nafcillin, oxacillin, piperacillin-tazobactam</p>
+    <p><b>Cephalosporins:</b> cefazolin, cephalexin, cefuroxime, cefdinir, cefixime, ceftriaxone, cefotaxime, ceftazidime, cefepime, ceftaroline</p>
+    <p><b>Carbapenem:</b> meropenem</p>
+    <p><b>Macrolides:</b> azithromycin, clarithromycin, erythromycin</p>
+    <p><b>Fluoroquinolones:</b> ciprofloxacin, levofloxacin, moxifloxacin</p>
+    <p><b>Others:</b> doxycycline, vancomycin, clindamycin, metronidazole</p>
+    <p><b>Antifungals:</b> fluconazole, terbinafine, griseofulvin</p>
+    <small>Source: EuroSCAR (Mockenhaupt, J Invest Dermatol 2008) and drug-label warnings. Not exhaustive.</small>
+  </div></details></div>
   <div class="grid">${SITES.map(s=>`
     <button class="site" data-site="${s.k}">
       <span><span class="label">${s.n}</span><span class="eg" style="display:block">${s.eg}</span></span>
