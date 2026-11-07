@@ -1523,6 +1523,92 @@ try{history.replaceState({s:1,site:null,age:null},'')}catch(e){}
     'Unspecified bacterial meningitis: 10–14 days'];
   OLD.cite='IDSA Practice Guidelines for Bacterial Meningitis (Tunkel et al., 2004). Added durations (Listeria, gram-negative bacilli, unspecified): EFNS guideline on community-acquired bacterial meningitis, Eur J Neurol 2008 (older children and adults).';
 })();
+  /* ---------- Bacteremia, organism identified (added 2 Nov 2026). Self-contained: adds the diagnosis to
+     the Bloodstream & heart section with its regimens. Sits above the Rheumatic carditis block. ---------- */
+(function(){
+  const ASK='Ask your attending or ID.';
+  const CITE='Organism choice and durations: supplied text (28 Oct 2026) citing AAP Red Book 2024–2027 (Systems-Based Treatment Table), McMullan et al., Pediatrics 2020 (S. aureus) and the FDA daptomycin label. Doses: Nelson’s Pediatric Antimicrobial Therapy, 2026; daptomycin: FDA label.';
+
+  const heart=SITES.find(s=>s.k==='heart');
+  const at=heart.dx.findIndex(d=>d.n==='Central line bloodstream infection');
+  heart.dx.splice(at<0?heart.dx.length:at+1,0,{n:'Bacteremia (organism identified)',
+    d:'Positive blood culture with the organism known; choose the definitive agent and duration',a:'yi inf tod sch ado',
+    p:{yi:['<i>E. coli</i>','GBS','<i>S. aureus</i>','<i>Enterococcus</i>'],
+       inf:['<i>S. pneumoniae</i>','<i>N. meningitidis</i>','<i>S. aureus</i>'],
+       tod:['<i>S. pneumoniae</i>','<i>N. meningitidis</i>','<i>S. aureus</i>'],
+       _:['<i>S. aureus</i>','CoNS, gram-negative bacilli and resistant organisms (central lines)']}});
+
+  const STEP='Oral step-down is reasonable when cultures clear within 72 hours, the child is stable, the source is controlled, the gut absorbs, and a highly bioavailable oral agent exists. Agent and dose: '+ASK;
+  const COMMON_DUR=[
+    'E. coli / Enterobacterales: 7 days from the first negative blood culture (21 days if meningitis)',
+    'Pseudomonas: 7 days from the first negative culture',
+    'S. aureus (MSSA or MRSA): 7–14 days IV without a focus; bone or joint 3–6 weeks (oral switch possible after at least 3 days IV); endocarditis 4–6 weeks',
+    'Coagulase-negative staphylococci: 5–7 days from the first negative culture, or observation alone after the catheter is removed. A single positive culture without hardware is usually contamination',
+    'Enterococcus: 7–14 days; endocarditis 4–6 weeks',
+    'S. pneumoniae: about 7–10 days total (short IV course, then oral)',
+    'N. meningitidis: about 4–7 days IV'];
+  const COMMON_KEY=[
+    'Empiric therapy before the organism is known: see the Sepsis / septic shock card. Endocarditis: see the Infective endocarditis card. Central line: see the Central line bloodstream infection card.',
+    'S. aureus bacteremia is real infection: repeat cultures until negative and consult ID. Consider an echocardiogram if bacteremia persists or there are risk factors.',
+    'Control the source: remove infected catheters and drain collections. For gram-negative bacteremia the duration is the same whether or not the catheter is removed.',
+    'Duration evidence is limited. Much of it comes from adult trials or pediatric observational data.',
+    'Not covered here (AmpC Enterobacterales such as Enterobacter, Serratia, Citrobacter; group A strep; viridans streptococci; Salmonella; Candida; anaerobes): '+ASK];
+
+  const DAPTO=D('S. aureus, MRSA: alternative','Daptomycin',[
+      R('1 to <2 years',10,'mg/kg','dose',24),R('2–6 years',9,'mg/kg','dose',24),
+      R('7–11 years',7,'mg/kg','dose',24),R('12–17 years',5,'mg/kg','dose',24)],'',
+      'Do not use with lung involvement. Under 1 year: '+ASK);
+
+  REG['Bacteremia (organism identified)|young']={cite:CITE,
+    iv:[
+      D('GBS (penicillin preferred)','Penicillin G',[PENG_NEO[2]],'','Doses are for 29–60 days.'),
+      D('GBS: alternative','Ampicillin',[AMP_NEO[3]],''),
+      D('Listeria','Ampicillin',[AMP_NEO[3]],'Meningitis: 300 mg/kg/day','Cephalosporins do not cover Listeria. Often given with gentamicin.'),
+      D('Listeria: often added','Gentamicin',[R('GA ≥35 wk, >7 days',5,'mg/kg','dose',24)],''),
+      CTX('E. coli / Enterobacterales (by susceptibilities)',50,'Avoid with jaundice or IV calcium. 100 mg/kg/day if meningitis is possible. ESBL: '+ASK),
+      D('E. coli: alternative','Gentamicin',[R('GA ≥35 wk, >7 days',5,'mg/kg','dose',24)],''),
+      D('S. aureus, MSSA','Oxacillin or nafcillin',[NAF_NEO[4]],''),
+      D('S. aureus, MRSA','Vancomycin',[T('','Dose: '+ASK)]),
+      D('Coagulase-negative staphylococci','Vancomycin',[T('','Dose: '+ASK)]),
+      D('Enterococcus (ampicillin-susceptible)','Ampicillin',[AMP_NEO[3]],'','Ampicillin-resistant or VRE: '+ASK),
+      CTX('S. pneumoniae',50,'Add vancomycin until susceptibilities return if critically ill or meningitis is suspected: '+ASK),
+      D('N. meningitidis','Ceftriaxone',[R('',100,'mg/kg','day',24)],M18('Max 4 g/day'),'Avoid with jaundice or IV calcium.'),
+      D('Pseudomonas','Cefepime',[CEFEP_NEO[2]],'','Other anti-pseudomonal agents: '+ASK)],
+    po:STEP,
+    allergy:ASK,
+    dur:['GBS: 10 days IV for bacteremia; 14 days for meningitis; 3–4 weeks for bone or joint; at least 4 weeks for ventriculitis',
+         'Listeria: 10–14 days; longer if meningitis'].concat(COMMON_DUR),
+    extra:['Doses shown are for 29–60 days. For 61–90 days: '+ASK,
+           'Meningitis possible in this age group: see the Bacterial meningitis card.'].concat(COMMON_KEY),
+    src:['Supplied text 28 Oct 2026','AAP Red Book 2024–2027','McMullan 2020',"Nelson's 2026"],
+    review:[{t:'Card written from the text Parth supplied on 28 Oct 2026; doses reused from existing Nelson’s-based cards, gaps say Ask your attending or ID. Not yet reviewed by you.'}]};
+
+  REG['Bacteremia (organism identified)|older']={cite:CITE,
+    iv:[
+      OXA('S. aureus, MSSA (better than vancomycin)',150),
+      CEFAZ('S. aureus, MSSA: or'),
+      VANC('S. aureus, MRSA',60,'Adjust by levels or AUC.'),
+      DAPTO,
+      D('Coagulase-negative staphylococci','Vancomycin',[R('',60,'mg/kg','day',8)],'AUC-guided; max 3,600 mg/day','Or oxacillin if susceptible.'),
+      CTX('S. pneumoniae',50,'100 mg/kg/day if meningitis is possible. Add vancomycin until susceptibilities return if critically ill or meningitis is suspected.'),
+      D('N. meningitidis','Ceftriaxone',[R('',100,'mg/kg','day',24)],M18('Max 4 g/day')),
+      D('N. meningitidis: or','Penicillin G',[R('',250000,'U/kg','day',4)],M18('Max 24 million U/day')),
+      AMPI('Enterococcus (ampicillin-susceptible)'),
+      D('Enterococcus (ampicillin-resistant)','Vancomycin',[R('',60,'mg/kg','day',8)],'AUC-guided; max 3,600 mg/day'),
+      D('Enterococcus, VRE','Linezolid or daptomycin',[T('','Dose: '+ASK)]),
+      CTX('E. coli / Enterobacterales (by susceptibilities)',50,'100 mg/kg/day if meningitis is possible.'),
+      D('E. coli: alternative or in combination','Gentamicin',[R('',7.5,'mg/kg','day',8)],'Levels'),
+      MERO('E. coli, ESBL',60),
+      CEFEP('Pseudomonas aeruginosa (by susceptibilities)',150),
+      PIPTAZ('Pseudomonas: or'),
+      MERO('Pseudomonas: or',60)],
+    po:STEP,
+    allergy:ASK,
+    dur:COMMON_DUR,
+    extra:COMMON_KEY,
+    src:['Supplied text 28 Oct 2026','AAP Red Book 2024–2027','McMullan 2020','FDA daptomycin label',"Nelson's 2026"],
+    review:[{t:'Card written from the text Parth supplied on 28 Oct 2026; doses reused from existing Nelson’s-based cards (daptomycin from the text). Not yet reviewed by you.'}]};
+})();
   /* ---------- Rheumatic carditis (added 22 Oct 2026). Self-contained: adds the diagnosis and its
      regimen to the heart section. Sits above render(). ---------- */
 (function(){
