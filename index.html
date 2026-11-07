@@ -1609,6 +1609,28 @@ try{history.replaceState({s:1,site:null,age:null},'')}catch(e){}
     src:['Supplied text 28 Oct 2026','AAP Red Book 2024–2027','McMullan 2020','FDA daptomycin label',"Nelson's 2026"],
     review:[{t:'Card written from the text Parth supplied on 28 Oct 2026; doses reused from existing Nelson’s-based cards (daptomycin from the text). Not yet reviewed by you.'}]};
 })();
+  /* ---------- Aspiration pneumonia update (6 Nov 2026). Self-contained: keeps the Nelson's regimens and
+     adds the German consensus 2024 options. Sits above the Rheumatic carditis block. ---------- */
+(function(){
+  const A=REG['Aspiration pneumonia|any'];
+  A.iv=[
+    CLI_IV('First line',40),
+    CTX('Plus','50–75'),
+    D('Or: community-acquired or aspiration pneumonia (German consensus 2024)','Ampicillin-sulbactam (dose = ampicillin)',
+      [R('',150,'mg/kg','day',8)],'Max 2 g ampicillin / 1 g sulbactam per dose'),
+    D('Or single drug. Chronic lung disease or tracheostomy with frequent lower respiratory infections, or critically ill (German consensus 2024)',
+      'Piperacillin-tazobactam (dose = piperacillin)',
+      [R('',300,'mg/kg','day',6,'÷ q6–8h','= 37.5–50 mg/kg/dose')],
+      'Max 4 g piperacillin / 0.5 g tazobactam per dose; max 16 g/day (Nelson’s)'),
+    D('Septic shock (German consensus 2024)','Meropenem',[R('',60,'mg/kg','day',8)],'Max 3 g/day'),
+    D('Septic shock: plus','Vancomycin',[R('',15,'mg/kg','dose',6)],'AUC- or level-guided')];
+  A.poList=[
+    CLI_PO('Step-down'),
+    AMXCLV('Or',90,8),
+    D('Or: oral or G-tube (German consensus 2024)','Amoxicillin-clavulanate 7:1 (dose = amoxicillin)',
+      [R('','50 (up to 80)','mg/kg','day',8)],'Max 875 mg amoxicillin per dose')];
+  A.cite='Nelson’s Pediatric Antimicrobial Therapy, 2026. Added options (German consensus 2024): Mauritz et al., Eur J Pediatr 2024 (recommendations for children with severe neurological impairment).';
+})();
   /* ---------- Rheumatic carditis (added 22 Oct 2026). Self-contained: adds the diagnosis and its
      regimen to the heart section. Sits above render(). ---------- */
 (function(){
